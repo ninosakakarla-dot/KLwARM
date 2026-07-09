@@ -21,4 +21,15 @@ void anwr_kernel32_HeapAlloc(CPU_STATE *cpu);
 void anwr_kernel32_HeapFree(CPU_STATE *cpu);
 void anwr_kernel32_GetProcessHeap(CPU_STATE *cpu);
 
+// Gestión de Archivos
+void anwr_kernel32_CreateFileA(CPU_STATE *cpu);
+void anwr_kernel32_ReadFile(CPU_STATE *cpu);
+void anwr_kernel32_WriteFile(CPU_STATE *cpu);
+void anwr_kernel32_CloseHandle(CPU_STATE *cpu);
+
+// Hilos y Sincronización
+void anwr_kernel32_CreateThread(CPU_STATE *cpu);
+void anwr_kernel32_Sleep(CPU_STATE *cpu);
+void anwr_kernel32_WaitForSingleObject(CPU_STATE *cpu);
+
 #endif // ANWR_WIN32_RUNTIME_H

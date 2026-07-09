@@ -16,6 +16,7 @@ add_executable(anwr_core
     src/translator/decoder.c
     src/translator/jit_engine.c
     src/runtime/win32_runtime.c
+    src/runtime/graphics.c
 )
 
 # Opciones de compilación para máxima optimización y depuración

@@ -35,6 +35,52 @@ void anwr_kernel32_HeapFree(CPU_STATE *cpu) {
     cpu->regs.rax = 1; // TRUE
 }
 
+// Auxiliar para traducir rutas C:\... a /sdcard/... o similar
+void anwr_translate_path(const char *win_path, char *android_path) {
+    // Simulación simple: mapear C:\ a /home/ubuntu/anwr_root/
+    if (strncmp(win_path, "C:\\", 3) == 0) {
+        sprintf(android_path, "/home/ubuntu/anwr_root/%s", win_path + 3);
+    } else {
+        strcpy(android_path, win_path);
+    }
+    // Cambiar \ por /
+    for (int i = 0; android_path[i]; i++) {
+        if (android_path[i] == '\\') android_path[i] = '/';
+    }
+}
+
+void anwr_kernel32_CreateFileA(CPU_STATE *cpu) {
+    const char *win_path = (const char *)cpu->regs.rcx;
+    char android_path[512];
+    anwr_translate_path(win_path, android_path);
+    
+    printf("[ANWR-FS] CreateFileA: %s -> %s\n", win_path, android_path);
+    
+    FILE *f = fopen(android_path, "rb+");
+    if (!f) f = fopen(android_path, "wb+"); // Crear si no existe
+    
+    cpu->regs.rax = (uint64_t)f;
+}
+
+void anwr_kernel32_CloseHandle(CPU_STATE *cpu) {
+    FILE *f = (FILE *)cpu->regs.rcx;
+    if (f) fclose(f);
+    cpu->regs.rax = 1;
+}
+
+void anwr_kernel32_Sleep(CPU_STATE *cpu) {
+    uint32_t ms = (uint32_t)cpu->regs.rcx;
+    printf("[ANWR-SYS] Sleep: %d ms\n", ms);
+    usleep(ms * 1000);
+}
+
+void anwr_kernel32_CreateThread(CPU_STATE *cpu) {
+    uint64_t start_addr = cpu->regs.r8;
+    printf("[ANWR-SYS] CreateThread: Nueva ejecución en 0x%lX\n", start_addr);
+    // En el futuro, aquí lanzaremos un nuevo hilo nativo de Linux
+    cpu->regs.rax = 0x5555; // Handle de hilo ficticio
+}
+
 void anwr_win32_dispatch(const char *func_name, CPU_STATE *cpu) {
     if (strcmp(func_name, "ExitProcess") == 0) {
         anwr_kernel32_ExitProcess(cpu);
@@ -46,6 +92,14 @@ void anwr_win32_dispatch(const char *func_name, CPU_STATE *cpu) {
         anwr_kernel32_HeapAlloc(cpu);
     } else if (strcmp(func_name, "HeapFree") == 0) {
         anwr_kernel32_HeapFree(cpu);
+    } else if (strcmp(func_name, "CreateFileA") == 0) {
+        anwr_kernel32_CreateFileA(cpu);
+    } else if (strcmp(func_name, "CloseHandle") == 0) {
+        anwr_kernel32_CloseHandle(cpu);
+    } else if (strcmp(func_name, "Sleep") == 0) {
+        anwr_kernel32_Sleep(cpu);
+    } else if (strcmp(func_name, "CreateThread") == 0) {
+        anwr_kernel32_CreateThread(cpu);
     } else {
         printf("[ANWR-WIN32] Advertencia: Función no implementada: %s\n", func_name);
     }
