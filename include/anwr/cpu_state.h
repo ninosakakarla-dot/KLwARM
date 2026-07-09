@@ -3,6 +3,7 @@
 #define ANWR_CPU_STATE_H
 
 #include <stdint.h>
+#include <sys/mman.h>
 
 // Estado de los registros x86_64
 typedef struct _X86_64_REGS {
@@ -17,7 +18,9 @@ typedef struct _X86_64_REGS {
 // Estado completo de la CPU emulada
 typedef struct _CPU_STATE {
     X86_64_REGS regs;
-    // En el futuro: Registros XMM/YMM, FPU, Segmentos, etc.
+    void *jit_buffer;     // Búfer para código ARM64 traducido
+    uint32_t jit_size;
+    uint32_t jit_ptr;     // Puntero actual en el búfer JIT
 } CPU_STATE;
 
 /**

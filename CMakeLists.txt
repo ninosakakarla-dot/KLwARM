@@ -13,6 +13,8 @@ include_directories(include)
 add_executable(anwr_core 
     src/loader/pe_loader.c
     src/translator/cpu_translator.c
+    src/translator/decoder.c
+    src/translator/jit_engine.c
 )
 
 # Opciones de compilación para máxima optimización y depuración
