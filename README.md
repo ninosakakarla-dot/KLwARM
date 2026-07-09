@@ -69,12 +69,25 @@ El flujo de ejecución de una aplicación en ANWR está diseñado para ser lo m�
 
 ## Instalación y Ejecución
 
-El núcleo de ANWR será un ejecutable ELF nativo para Android, lo que proporciona una gran flexibilidad en su despliegue. Podrá ejecutarse de las siguientes maneras:
+El núcleo de ANWR será un ejecutable ELF nativo para Android ARM64, diseñado para ejecutarse directamente sobre Android utilizando sus bibliotecas nativas y comunicándose con el kernel mediante syscalls estándar.
 
-- Desde Termux.
-- Desde un terminal Linux en Android.
-- Como un binario instalado por un instalador propio.
-- En el futuro, podría existir un APK únicamente como interfaz gráfica opcional, pero el motor principal no dependerá de él.
+Durante las primeras fases de desarrollo, el motor podrá iniciarse desde Termux, que servirá como entorno de compilación, pruebas y ejecución. El objetivo a largo plazo es que ANWR pueda instalarse como un runtime nativo del sistema, independiente de Termux.
+
+### Formas de Ejecución
+
+#### Fase de Desarrollo
+- Ejecución desde Termux.
+- Compilación con herramientas nativas (Clang/LLVM, CMake, etc.).
+- Depuración desde la terminal.
+
+#### Fase de Producción
+- Instalación mediante un instalador propio.
+- Ejecución directa del binario ELF.
+- Integración opcional con una interfaz gráfica (el motor seguirá siendo independiente del frontend).
+
+### Filosofía de Desarrollo y Termux
+
+Es importante destacar que **Termux no forma parte integral de ANWR**. Termux será únicamente una herramienta de desarrollo y ejecución inicial. El verdadero núcleo del proyecto será un ejecutable nativo para Android que funcionará independientemente del entorno desde el que sea lanzado.
 
 ---
 
