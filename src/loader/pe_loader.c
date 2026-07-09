@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "anwr/pe_loader.h"
 #include "anwr/cpu_state.h"
+#include "anwr/win32_runtime.h"
 
 /**
  * anwr_get_mmap_prot: Convierte características PE a protecciones mmap.
@@ -115,7 +116,12 @@ int anwr_load_pe(const char *path) {
         while (import_desc->Name != 0) {
             char *dll_name = (char*)image_base + import_desc->Name;
             printf("[ANWR] Dependencia detectada: %s\n", dll_name);
-            // En la Fase 2, aquí cargaremos las DLLs nativas de ANWR
+            
+            // Simulación de resolución de símbolos (IAT Hooking)
+            // En un futuro, aquí reemplazaremos las direcciones de la IAT 
+            // con punteros a nuestras funciones de despacho nativas.
+            printf("[ANWR] Preparando interceptación para %s\n", dll_name);
+
             import_desc++;
         }
     }
