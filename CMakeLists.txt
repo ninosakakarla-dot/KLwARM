@@ -12,6 +12,7 @@ include_directories(include)
 # Definición del ejecutable principal (el motor ELF nativo)
 add_executable(anwr_core 
     src/loader/pe_loader.c
+    src/translator/cpu_translator.c
 )
 
 # Opciones de compilación para máxima optimización y depuración

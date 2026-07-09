@@ -5,6 +5,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include "anwr/pe_loader.h"
+#include "anwr/cpu_state.h"
 
 /**
  * anwr_get_mmap_prot: Convierte características PE a protecciones mmap.
@@ -119,9 +120,16 @@ int anwr_load_pe(const char *path) {
         }
     }
 
-    printf("[ANWR] EntryPoint (RVA): 0x%X -> Dirección: %p\n", 
-           nt_headers.OptionalHeader.AddressOfEntryPoint, 
-           (char*)image_base + nt_headers.OptionalHeader.AddressOfEntryPoint);
+    uint64_t entry_point = (uint64_t)((char*)image_base + nt_headers.OptionalHeader.AddressOfEntryPoint);
+    printf("[ANWR] EntryPoint (RVA): 0x%X -> Dirección: 0x%lX\n", 
+           nt_headers.OptionalHeader.AddressOfEntryPoint, entry_point);
+
+    // Iniciar el estado de la CPU y comenzar la ejecución
+    CPU_STATE cpu;
+    // Reservar un stack básico para la prueba
+    void *stack = mmap(NULL, 1024 * 1024, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    anwr_cpu_init(&cpu, entry_point, (uint64_t)stack + (1024 * 1024));
+    anwr_cpu_execute(&cpu);
 
     return 0;
 }
