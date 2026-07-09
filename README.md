@@ -8,7 +8,11 @@
 
 ## Resumen Ejecutivo
 
-**ANWR (Android Native Windows Runtime)** es un proyecto cuyo objetivo es crear un runtime nativo para Android ARM64 capaz de ejecutar aplicaciones de Windows (.exe, .dll y otros formatos PE) con el mayor rendimiento posible.
+**ANWR (Android Native Windows Runtime)** es un proyecto de ingeniería de sistemas de alto nivel cuyo objetivo es crear un runtime nativo para Android ARM64 capaz de ejecutar aplicaciones de Windows (.exe, .dll y otros formatos PE) con el mayor rendimiento posible. 
+
+Bajo una visión estratégica que combina la excelencia técnica y la eficiencia operativa, ANWR busca redefinir la compatibilidad de software en dispositivos móviles, eliminando las capas de abstracción tradicionales para alcanzar un rendimiento cercano al nativo.
+
+Para conocer los detalles específicos de nuestra ejecución, consulta el [ROADMAP.md](./ROADMAP.md).
 
 No pretende ser un emulador tradicional, una máquina virtual ni un APK que encapsule otras herramientas. Su filosofía es construir un motor de ejecución optimizado que aproveche directamente el kernel de Android y las bibliotecas nativas del sistema.
 
