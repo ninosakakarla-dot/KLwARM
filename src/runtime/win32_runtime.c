@@ -62,6 +62,26 @@ void anwr_kernel32_CreateFileA(CPU_STATE *cpu) {
     cpu->regs.rax = (uint64_t)f;
 }
 
+void anwr_kernel32_ReadFile(CPU_STATE *cpu) {
+    FILE *f = (FILE *)cpu->regs.rcx;
+    void *buffer = (void *)cpu->regs.rdx;
+    uint32_t size = (uint32_t)cpu->regs.r8;
+    
+    size_t read = fread(buffer, 1, size, f);
+    printf("[ANWR-FS] ReadFile: Leídos %zu bytes\n", read);
+    cpu->regs.rax = 1; // Success
+}
+
+void anwr_kernel32_WriteFile(CPU_STATE *cpu) {
+    FILE *f = (FILE *)cpu->regs.rcx;
+    const void *buffer = (const void *)cpu->regs.rdx;
+    uint32_t size = (uint32_t)cpu->regs.r8;
+    
+    size_t written = fwrite(buffer, 1, size, f);
+    printf("[ANWR-FS] WriteFile: Escritos %zu bytes\n", written);
+    cpu->regs.rax = 1; // Success
+}
+
 void anwr_kernel32_CloseHandle(CPU_STATE *cpu) {
     FILE *f = (FILE *)cpu->regs.rcx;
     if (f) fclose(f);
@@ -94,6 +114,10 @@ void anwr_win32_dispatch(const char *func_name, CPU_STATE *cpu) {
         anwr_kernel32_HeapFree(cpu);
     } else if (strcmp(func_name, "CreateFileA") == 0) {
         anwr_kernel32_CreateFileA(cpu);
+    } else if (strcmp(func_name, "ReadFile") == 0) {
+        anwr_kernel32_ReadFile(cpu);
+    } else if (strcmp(func_name, "WriteFile") == 0) {
+        anwr_kernel32_WriteFile(cpu);
     } else if (strcmp(func_name, "CloseHandle") == 0) {
         anwr_kernel32_CloseHandle(cpu);
     } else if (strcmp(func_name, "Sleep") == 0) {
