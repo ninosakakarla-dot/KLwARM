@@ -60,8 +60,19 @@ void anwr_cpu_execute(CPU_STATE *cpu) {
         // Intentar traducir la instrucción al búfer JIT
         anwr_translate_instruction(cpu, &inst);
 
-        // Avanzar RIP según el tamaño real de la instrucción decodificada
-        cpu->regs.rip += inst.size; 
+        // Verificar si RIP ha caído en una dirección parcheada (IAT Hook)
+        if ((cpu->regs.rip & 0xFFFFFFFF00000000) == 0xDEADBEEF00000000) {
+            const char *func_name = (const char *)(cpu->regs.rip & 0x00000000FFFFFFFF);
+            printf("[ANWR-CPU] Interceptada llamada a Win32: %s\n", func_name);
+            anwr_win32_dispatch(func_name, cpu);
+            
+            // Simular el retorno de la función (POP RIP del stack)
+            // En una implementación real, esto lo maneja el traductor
+            cpu->regs.rip = *(uint64_t *)cpu->regs.rsp;
+            cpu->regs.rsp += 8;
+        } else {
+            cpu->regs.rip += inst.size; 
+        }
     }
 
     printf("[ANWR-CPU] Ejecución pausada.\n");

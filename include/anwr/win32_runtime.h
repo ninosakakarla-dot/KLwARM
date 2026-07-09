@@ -16,4 +16,9 @@ void anwr_win32_dispatch(const char *func_name, CPU_STATE *cpu);
 void anwr_kernel32_ExitProcess(CPU_STATE *cpu);
 void anwr_kernel32_GetModuleHandleA(CPU_STATE *cpu);
 
+// Gestión de Heap
+void anwr_kernel32_HeapAlloc(CPU_STATE *cpu);
+void anwr_kernel32_HeapFree(CPU_STATE *cpu);
+void anwr_kernel32_GetProcessHeap(CPU_STATE *cpu);
+
 #endif // ANWR_WIN32_RUNTIME_H

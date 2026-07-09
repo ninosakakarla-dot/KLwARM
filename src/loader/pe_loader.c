@@ -117,10 +117,24 @@ int anwr_load_pe(const char *path) {
             char *dll_name = (char*)image_base + import_desc->Name;
             printf("[ANWR] Dependencia detectada: %s\n", dll_name);
             
-            // Simulación de resolución de símbolos (IAT Hooking)
-            // En un futuro, aquí reemplazaremos las direcciones de la IAT 
-            // con punteros a nuestras funciones de despacho nativas.
-            printf("[ANWR] Preparando interceptación para %s\n", dll_name);
+            // Resolución Real de la IAT (IAT Patching)
+            uint64_t *iat = (uint64_t*)((char*)image_base + import_desc->FirstThunk);
+            uint64_t *ilt = (uint64_t*)((char*)image_base + import_desc->OriginalFirstThunk);
+
+            while (*ilt != 0) {
+                if (!(*ilt & 0x8000000000000000)) { // Importación por nombre
+                    char *func_name = (char*)image_base + (*ilt & 0xFFFFFFFF) + 2;
+                    printf("[ANWR] Parcheando función: %s\n", func_name);
+                    
+                    // Aquí es donde la magia ocurre:
+                    // En lugar de la dirección real de la DLL de Windows,
+                    // ponemos una dirección especial que el traductor reconocerá
+                    // como una llamada al runtime nativo de ANWR.
+                    *iat = 0xDEADBEEF00000000 | (uint64_t)func_name; 
+                }
+                iat++;
+                ilt++;
+            }
 
             import_desc++;
         }

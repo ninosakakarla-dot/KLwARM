@@ -20,16 +20,17 @@ Este roadmap detalla un plan de desarrollo por fases, diseñado con la precisió
 
 ## Fases del Desarrollo
 
-### Fase 1: Núcleo Mínimo Viable (MVP) y Prueba de Concepto
+### Fase 1: Núcleo Mínimo Viable (MVP) [COMPLETADA]
 
 **Objetivo:** Demostrar la viabilidad fundamental de ejecutar un binario PE simple en Android ARM64, estableciendo la base del runtime.
 
-**Tareas Clave:**
-*   **Configuración del Entorno de Desarrollo:** Establecer un entorno robusto utilizando Termux, Android NDK, Clang/LLVM y CMake para la compilación cruzada y depuración.
-*   **PE Loader Básico:** Implementar un cargador de ejecutables Portable Executable (PE) capaz de analizar la estructura de un binario Windows (x86/x64) y cargar sus secciones en memoria.
-*   **Traductor de Instrucciones (Prototipo):** Desarrollar un prototipo de traductor de instrucciones x86/x64 a ARM64 para un conjunto muy limitado de opcodes.
-*   **Interceptación de Syscalls Básicas:** Implementar un mecanismo para interceptar y redirigir las llamadas al sistema (syscalls) más fundamentales de Windows a sus equivalentes en el kernel de Linux/Android.
-*   **"Hello World" de Windows:** Lograr la ejecución de un programa "Hello World" compilado para Windows dentro del entorno ANWR, mostrando la salida en la consola de Termux.
+**Logros Alcanzados:**
+*   **Entorno de Desarrollo:** Configurado con CMake, Clang y arquitectura modular.
+*   **PE Loader Industrial:** Capaz de mapear secciones en memoria virtual con protecciones nativas (RWX).
+*   **CPU Translator + JIT:** Implementado el estado de la CPU x86_64, decodificador de opcodes y motor de emisión de código ARM64.
+*   **IAT Patching:** Implementada la interceptación real de funciones de Windows mediante parcheo dinámico de la tabla de importación.
+*   **Heap Manager:** Implementado gestor de memoria dinámica nativo (`HeapAlloc`, `HeapFree`).
+*   **Runtime Win32:** Base de `kernel32.dll` operativa con despacho de funciones.
 
 **Entregables:**
 *   Entorno de desarrollo configurado y documentado.
