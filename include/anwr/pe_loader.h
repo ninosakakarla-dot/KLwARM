@@ -42,6 +42,13 @@ typedef struct _IMAGE_FILE_HEADER {
 // Estructura del encabezado opcional PE (parte de IMAGE_NT_HEADERS)
 // Esta es una versión simplificada para 32 bits (PE32) o 64 bits (PE32+)
 // Solo se incluyen los campos más relevantes para la carga inicial.
+typedef struct _IMAGE_DATA_DIRECTORY {
+    uint32_t VirtualAddress;
+    uint32_t Size;
+} IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;
+
+#define IMAGE_NUMBEROF_DIRECTORY_ENTRIES 16
+
 typedef struct _IMAGE_OPTIONAL_HEADER {
     uint16_t Magic;
     uint8_t  MajorLinkerVersion;
@@ -51,9 +58,7 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
     uint32_t SizeOfUninitializedData;
     uint32_t AddressOfEntryPoint;
     uint32_t BaseOfCode;
-    // PE32+ tiene BaseOfData, pero no es universalmente requerido para la carga inicial
-    // y puede variar. Para simplificar, nos enfocamos en los campos comunes.
-    uint64_t ImageBase; // uint32_t para PE32, uint64_t para PE32+
+    uint64_t ImageBase;
     uint32_t SectionAlignment;
     uint32_t FileAlignment;
     uint16_t MajorOperatingSystemVersion;
@@ -68,13 +73,13 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
     uint32_t CheckSum;
     uint16_t Subsystem;
     uint16_t DllCharacteristics;
-    uint64_t SizeOfStackReserve; // uint32_t para PE32, uint64_t para PE32+
-    uint64_t SizeOfStackCommit;  // uint32_t para PE32, uint64_t para PE32+
-    uint64_t SizeOfHeapReserve;  // uint32_t para PE32, uint64_t para PE32+
-    uint64_t SizeOfHeapCommit;   // uint32_t para PE32, uint64_t para PE32+
+    uint64_t SizeOfStackReserve;
+    uint64_t SizeOfStackCommit;
+    uint64_t SizeOfHeapReserve;
+    uint64_t SizeOfHeapCommit;
     uint32_t LoaderFlags;
     uint32_t NumberOfRvaAndSizes;
-    // IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+    IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 } IMAGE_OPTIONAL_HEADER, *PIMAGE_OPTIONAL_HEADER;
 
 // Estructura del encabezado NT (PE)
@@ -103,5 +108,24 @@ typedef struct _IMAGE_SECTION_HEADER {
 // Constantes para los magic numbers
 #define IMAGE_DOS_SIGNATURE  0x5A4D     // MZ
 #define IMAGE_NT_SIGNATURE   0x00004550 // PE\0\0
+
+// Características de sección
+#define IMAGE_SCN_MEM_EXECUTE 0x20000000
+#define IMAGE_SCN_MEM_READ    0x40000000
+#define IMAGE_SCN_MEM_WRITE   0x80000000
+
+// Estructuras para la Tabla de Importación
+typedef struct _IMAGE_IMPORT_DESCRIPTOR {
+    union {
+        uint32_t Characteristics;
+        uint32_t OriginalFirstThunk; // RVA a la ILT
+    } DUMMYUNIONNAME;
+    uint32_t TimeDateStamp;
+    uint32_t ForwarderChain;
+    uint32_t Name;               // RVA al nombre de la DLL
+    uint32_t FirstThunk;          // RVA a la IAT
+} IMAGE_IMPORT_DESCRIPTOR, *PIMAGE_IMPORT_DESCRIPTOR;
+
+#define IMAGE_DIRECTORY_ENTRY_IMPORT 1
 
 #endif // ANWR_PE_LOADER_H
